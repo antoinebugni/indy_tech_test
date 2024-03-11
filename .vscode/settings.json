@@ -4,6 +4,10 @@
   "python.linting.enabled": true,
   "python.linting.cwd": "src",
   "python.formatting.provider": "black",
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.formatOnSave": true
+  },
   "files.exclude": {
     "**/.git": true,
     "**/.svn": true,

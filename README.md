@@ -1,10 +1,79 @@
-# Django Rest Framework boilerplate
+# ✨ Technical Test - Indy ✨
 
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+This project is built on top of the [python-django-drf-boilerplate](https://github.com/Vivify-Ideas/python-django-drf-boilerplate).
 
-This is boilerplate for starting fresh new DRF projects. It's built using [cookiecutter-django-rest](https://github.com/agconti/cookiecutter-django-rest).
+I used this simply because that's the technology I'm used to work with, it saved me a lot of time (it would have taken me longer to figure stuff out in NodeJS for example). On the plus side, it comes with a lot of built-in features - it has  Postgres DB, Swagger docs, dockerization etc... see below for full list of features if you're interested (I left it from the original README).
 
-## Highlights
+
+## Starting the application
+
+You will need Docker to run this project - simply check out the repo and run the following command:
+
+```bash
+cp .env.dist .env
+```
+
+You will need to modify the .env file manually as well, to add the following line:
+
+```OPEN_WEATHER_KEY=[put your key here]```
+
+(I didn't want to commit the key to the repo, hence this extra step for security)
+
+Then run this command to start the container:
+
+```bash
+docker-compose up
+```
+
+If all goes well, this should start the server, run all the migrations etc...
+
+
+## Test the API with Swagger
+
+Now the server is up and running, you should be able to access the Swagger docs via [link](http://localhost:8001/swagger)
+
+However, you may run into a 403 error: this means you need to authenticate first. To do this, create a superuser first, by running the following command:
+
+```bash
+docker-compose run --rm web ./manage.py createsuperuser
+```
+
+Then open the Django admin: [link](http://localhost:8001/admin)
+Authenticate on the admin page. Once authenticated, you should be able to access swagger.
+
+You will find several endpoints, thought the 2 we are interested in which I created are:
+- /api/v1/promocodes/
+- /api/v1/promocodes/validate
+
+Happy testing!
+
+
+## Run the unit tests
+
+Simply run the command:
+
+```bash
+docker-compose run --rm web ./manage.py test
+```
+
+Nothing special here, the tests should all pass.
+
+A quick note: test coverage is not 100%, I didn't have time to fully complete this but hopefully this gives you a good idea of the intention. I also didn't write integration test for the API view, only wrote unit tests, but likewise, this was just a question of time.
+
+
+## Code improvements
+
+I left many TODO comments in the code. I ran out of time, so the code is not perfect by any means. For example some of the logic inside the view may belong inside the serializer, and likewise some of the logic might belong in the models.
+
+Some of the code could also do with some refactoring to improve readability, making it DRY etc...
+
+The function that validates the promo code was obviously the biggest challenge. I wrote it as a recursive function which calls itself when encountering an or/and statement. The code is not particularly pretty, like I said this could do with some refactoring to make it more readble.
+
+
+## Boilerplate
+Below is some info about the boilertplate I used, its features etc...
+
+### Boilerplate - Highlights
 
 - Modern Python development with Python 3.8+
 - Bleeding edge Django 3.1+
@@ -13,7 +82,7 @@ This is boilerplate for starting fresh new DRF projects. It's built using [cooki
 - Full test coverage, continuous integration, and continuous deployment.
 - Celery tasks
 
-### Features built-in
+### Boilerplate - Features built-in
 
 - JSON Web Token authentication using [Simple JWT](https://django-rest-framework-simplejwt.readthedocs.io/en/latest/)
 - Social (FB + G+) signup/sigin
@@ -25,69 +94,3 @@ This is boilerplate for starting fresh new DRF projects. It's built using [cooki
 - Swagger API docs out-of-the-box
 - Code formatter [black](https://black.readthedocs.io/en/stable/)
 - Tests (with mocking and factories) with code-coverage support
-
-## API Docs
-
-API documentation is automatically generated using Swagger. You can view documention by visiting this [link](http://localhost:8000/swagger).
-
-## Prerequisites
-
-If you are familiar with Docker, then you just need [Docker](https://docs.docker.com/docker-for-mac/install/). If you don't want to use Docker, then you just need Python3 and Postgres installed.
-
-## Local Development with Docker
-
-Start the dev server for local development:
-
-```bash
-cp .env.dist .env
-docker-compose up
-```
-
-Run a command inside the docker container:
-
-```bash
-docker-compose run --rm web [command]
-```
-
-## Local Development without Docker
-
-### Install
-
-```bash
-python3 -m venv env && source env/bin/activate                # activate venv
-cp .env.dist .env                                             # create .env file and fill-in DB info
-pip install -r requirements.txt                               # install py requirements
-./manage.py migrate                                           # run migrations
-./manage.py collectstatic --noinput                           # collect static files
-redis-server                                                  # run redis locally for celery
-celery -A src.config worker --beat --loglevel=debug
-  --pidfile="./celerybeat.pid"
-  --scheduler django_celery_beat.schedulers:DatabaseScheduler # run celery beat and worker
-```
-
-### Run dev server
-
-This will run server on [http://localhost:8000](http://localhost:8000)
-
-```bash
-./manage.py runserver
-```
-
-### Create superuser
-
-If you want, you can create initial super-user with next commad:
-
-```bash
-./manage.py createsuperuser
-```
-
-### Running Tests
-
-To run all tests with code-coverate report, simple run:
-
-```bash
-./manage.py test
-```
-
-
-You're now ready to ROCK! ✨ 💅 🛳
